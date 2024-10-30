@@ -1,0 +1,6 @@
+SGBD_ = 'mariadb+mysqlconnector'
+#SGBD_ = 'mysql+mysqlconnector'
+usuario_ = 'root'
+senha_ = ''
+servidor_ = 'localhost'
+database_ = 'bancodedados'
