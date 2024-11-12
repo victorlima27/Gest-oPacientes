@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Médicos</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <h1 class="logo">Gestão de Pacientes</h1>
+            <nav class="nav">
+                <a href="{{ url_for('clientes_page') }}">Clientes</a>
+                <a href="{{ url_for('medicos_page') }}" class="active">Médicos</a>
+                <a href="{{ url_for('consultas_page') }}">Consultas</a>
+                <a href="{{ url_for('cadastro_page') }}">Cadastro</a>
+                <a href="{{ url_for('logout') }}" class="logout">Sair</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <section class="data-section">
+                <h2>Médicos</h2>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nome</th>
+                            <th>Especialidade</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for medico in medicos %}
+                            <tr>
+                                <td>{{ medico.id }}</td>
+                                <td>{{ medico.nome }}</td>
+                                <td>{{ medico.especialidade }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </section>
+        </div>
+    </main>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
