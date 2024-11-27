@@ -5,6 +5,7 @@ from flask_wtf.csrf import CSRFProtect
 from flask_bcrypt import Bcrypt
 from flasgger import Swagger
 from flask_migrate import Migrate
+from flask_cors import CORS
 
 app = Flask(__name__)
 
@@ -16,6 +17,7 @@ bcrypt = Bcrypt(app)
 swagger = Swagger(app)
 migrate = Migrate(app,db)
 seed_cli = AppGroup('seed')
+CORS(app,resources={r'/*':{"origins":"http://localhost:4200"}})
 
 # Importando as rotas
 from rotas import *
