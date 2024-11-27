@@ -1,4 +1,5 @@
 from flask import Flask, jsonify
+from flask.cli import AppGroup
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf.csrf import CSRFProtect
 from flask_bcrypt import Bcrypt
@@ -14,11 +15,14 @@ csrf = CSRFProtect(app)
 bcrypt = Bcrypt(app)
 swagger = Swagger(app)
 migrate = Migrate(app,db)
+seed_cli = AppGroup('seed')
 
-# Importe suas rotas
+# Importando as rotas
 from rotas import *
-# Importar os modelos
-from models import Paciente, Medico, Consulta, Exame, Usuario, Notificacao
+# Importando Seed
+from seed import *
+# Importando os modelos
+from models import *
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=9090, debug=True)
