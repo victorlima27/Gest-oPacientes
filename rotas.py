@@ -245,3 +245,91 @@ def consulta_by_id(id):
         "diagnostico": consulta.diagnostico,
         "prescricao": consulta.prescricao,
     }), 200
+
+@app.route('/exames', methods=['GET', 'POST'])
+@csrf.exempt
+def exames():
+    from models import Paciente,Medico,Exame
+    if request.method == 'GET':
+        # LISTAR TODOS OS EXAMES
+        exames = Exame.query.all()
+        exames_list = [
+            {
+                "id": exame.id,
+                "pacienteNome": Paciente.query.get(exame.paciente_id).nome if exame.paciente_id else None,
+                "medicoNome": Medico.query.get(exame.medico_id).nome if exame.medico_id else None,
+                "tipo_exame": exame.tipo_exame,
+                "resultado": exame.resultado,
+                "observacoes": exame.observacoes,
+            }
+            for exame in exames
+        ]
+        return jsonify(exames_list), 200
+
+    elif request.method == 'POST':
+        # CADASTRAR UM NOVO EXAME
+        data = request.get_json()
+
+        if not data:
+            return jsonify({"error": "Requisição inválida"}), 400
+
+        paciente_id = data.get('paciente_id')
+        medico_id = data.get('medico_id')
+        tipo_exame = data.get('tipo_exame')
+        resultado = data.get('resultado')
+        observacoes = data.get('observacoes')
+
+        if not all([paciente_id, medico_id, tipo_exame, resultado, observacoes]):
+            return jsonify({"error": "Todos os campos são obrigatórios"}), 400
+
+        try:
+            novo_exame = Exame(
+                paciente_id=paciente_id,
+                medico_id=medico_id,
+                tipo_exame=tipo_exame,
+                resultado=resultado,
+                observacoes=observacoes
+            )
+
+            db.session.add(novo_exame)
+            db.session.commit()
+
+            return jsonify({
+                "message": "Exame cadastrado com sucesso!",
+                "exame": {
+                    "id": novo_exame.id,
+                    "paciente_id": novo_exame.paciente_id,
+                    "medico_id": novo_exame.medico_id,
+                    "tipo_exame": novo_exame.tipo_exame,
+                    "resultado": novo_exame.resultado,
+                    "observacoes": novo_exame.observacoes
+                }
+            }), 201
+
+        except Exception as e:
+            print(str(e))
+            return jsonify({"error": "Erro ao cadastrar exame", "details": str(e)}), 500
+
+
+@app.route('/exames/<int:id>', methods=['GET'])
+def exame_by_id(id):
+    from models import Paciente,Medico,Exame
+    # BUSCAR EXAME POR ID
+    exame = Exame.query.get(id)
+
+    if not exame:
+        return jsonify({"error": "Exame não encontrado"}), 404
+
+    medico = Medico.query.get(exame.medico_id)
+    paciente = Paciente.query.get(exame.paciente_id)
+
+    return jsonify({
+        "id": exame.id,
+        "paciente_id": exame.paciente_id,
+        "pacienteNome": paciente.nome if paciente else None,
+        "medico_id": exame.medico_id,
+        "medicoNome": medico.nome if medico else None,
+        "tipo_exame": exame.tipo_exame,
+        "resultado": exame.resultado,
+        "observacoes": exame.observacoes
+    }), 200
